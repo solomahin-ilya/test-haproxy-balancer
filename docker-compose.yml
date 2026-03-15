@@ -1,0 +1,52 @@
+services:
+  h01:
+    image: haproxy:3.3.4
+    container_name: h01
+    volumes:
+      - ./haproxy01.cfg:/usr/local/etc/haproxy/haproxy.cfg
+    ports:
+      - "80:80"
+      - "7000:7000"
+    restart: unless-stopped
+    networks:
+      - local-net
+
+  h02:
+    image: haproxy:3.3.4
+    container_name: h02
+    volumes:
+      - ./haproxy02.cfg:/usr/local/etc/haproxy/haproxy.cfg
+    ports:
+      - "81:81"
+      - "7001:7001"
+    restart: unless-stopped
+    networks:
+      - local-net
+
+  f01:
+    image: nginx:1.29.6-alpine
+    container_name: f01
+    volumes:
+      - ./f01/default.conf:/etc/nginx/conf.d/default.conf:ro
+      - ./f01/html:/etc/nginx/html:ro
+    ports:
+      - "82:82"
+    restart: unless-stopped
+    networks:
+      - local-net
+
+  f02:
+    image: nginx:1.29.6-alpine
+    container_name: f02
+    volumes:
+      - ./f02/default.conf:/etc/nginx/conf.d/default.conf:ro
+      - ./f02/html:/etc/nginx/html:ro
+    ports:
+      - "83:83"
+    restart: unless-stopped
+    networks:
+      - local-net
+
+networks:
+  local-net:
+    driver: bridge
